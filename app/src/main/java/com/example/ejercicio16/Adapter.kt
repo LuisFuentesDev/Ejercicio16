@@ -3,39 +3,56 @@ package com.example.ejercicio16
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.ejercicio16.PaisesLatam.Companion.paises
 import com.example.ejercicio16.databinding.ItemLayoutBinding
 
 
 class Adapter : RecyclerView.Adapter<Adapter.ViewHolder>() {
     var paises = mutableListOf<Pais>()
+    var callBack: PaisCallBack? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Adapter.ViewHolder {
-        var binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    fun setPaisCallBack(c: PaisCallBack) {
+        this.callBack = c
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
 
-    override fun onBindViewHolder(holder: Adapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val item = paises[position]
         holder.bind(item)
+
     }
 
     override fun getItemCount(): Int {
         return paises.size
+
     }
 
     fun setData(listaPaises: List<Pais>) {
         this.paises = listaPaises.toMutableList()
     }
 
-    class ViewHolder(val binding: ItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(pais: Pais) {
-            binding.textView2.text = pais.nombre
-            binding.imageView.load(pais.imgUrl)
+    inner class ViewHolder(var binding: ItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
+            fun bind(item: Pais) {
+            binding.textView2.text = item.nombre
+            binding.imageView.load(item.imgUrl)
+            binding.cardView.setOnClickListener {
+                val texto = "Pais:${item.nombre} Poblacion:${item.poblacion}"
+                callBack?.showCountrie(texto)
+            }
         }
     }
 
+    interface PaisCallBack {
+        fun showCountrie(s: String)
+
+
+    }
 }
